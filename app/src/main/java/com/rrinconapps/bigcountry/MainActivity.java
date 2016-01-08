@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-    private SQLiteDatabase _db;
+    private SQLiteDatabase db;
 
     Game game;
 
@@ -53,27 +53,31 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     *
+     * @param view
+     */
     public void startGame(View view) {
         setContentView(R.layout.activity_question);
-        game = new Game(6);
+        game = new Game(8);
         displayScore();
 
         //Abrimos la base de datos 'DBWorld' en modo lectura
         DataBaseHelper myDbHelper = new DataBaseHelper(this, "DBWorld", null, 1);
-        _db = myDbHelper.getWritableDatabase();
+        db = myDbHelper.getWritableDatabase();
 
         nextQuestion(view);
     }
 
     public void nextQuestion(View view) {
         enableImageButtons();
-        if (game.get_current_question_num() < game.get_numQuestions()) {
+        if (game.getCurrentQuestionNum() < game.getNumQuestions()) {
             ImageButton optionA_IM = (ImageButton) findViewById(R.id.option_a_image_button);
             TextView optionA_TV = (TextView) findViewById(R.id.option_a_name);
             ImageButton optionB_IM = (ImageButton) findViewById(R.id.option_b_image_button);
             TextView optionB_TV = (TextView) findViewById(R.id.option_b_name);
             questionProgressBar();
-            game.new_question(_db, optionA_IM, optionA_TV, optionB_IM, optionB_TV);
+            game.newQuestion(db, optionA_IM, optionA_TV, optionB_IM, optionB_TV);
         } else {
             gameFinished();
         }
@@ -118,14 +122,14 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_end);
 
         //Cerramos la base de datos
-        if(_db != null) {
-            _db.close();
+        if(db != null) {
+            db.close();
         }
 
         TextView end_message = (TextView) findViewById(R.id.end_message);
         TextView finalScoreMessage = (TextView) findViewById(R.id.final_score_message);
-        double score = (double) game.get_score() / game.get_numQuestions();
-        finalScoreMessage.setText(game.get_score() + " / " + game.get_numQuestions());
+        double score = (double) game.getScore() / game.getNumQuestions();
+        finalScoreMessage.setText(game.getScore() + " / " + game.getNumQuestions());
         if (score < 0.5) {
             end_message.setText("Best luck next time! try harder!");
         }
@@ -140,8 +144,8 @@ public class MainActivity extends ActionBarActivity {
         disableImageButtons();
         mCountDownTimer.cancel();
         ImageButton optionA_ImageButton = (ImageButton) findViewById(R.id.option_a_image_button);
-        Question q = game.get_current_question();
-        if (q.get_answer().equals(q.get_optionA())) {
+        Question q = game.getCurrentQuestion();
+        if (q.getAnswer().equals(Answers.OPTION_A)) {
             game.add_points(1);
             displayScore();
             rightAnswerEffect(optionA_ImageButton);
@@ -156,8 +160,8 @@ public class MainActivity extends ActionBarActivity {
         disableImageButtons();
         mCountDownTimer.cancel();
         ImageButton optionB_ImageButton = (ImageButton) findViewById(R.id.option_b_image_button);
-        Question q = game.get_current_question();
-        if (q.get_answer().equals(q.get_optionB())) {
+        Question q = game.getCurrentQuestion();
+        if (q.getAnswer().equals(Answers.OPTION_B)) {
             game.add_points(1);
             displayScore();
             rightAnswerEffect(optionB_ImageButton);
@@ -200,6 +204,6 @@ public class MainActivity extends ActionBarActivity {
      */
     private void displayScore() {
         TextView scoreTextView = (TextView) findViewById(R.id.score_view);
-        scoreTextView.setText("Score: " + game.get_score() + "/" + game.get_numQuestions());
+        scoreTextView.setText("Score: " + game.getScore() + "/" + game.getNumQuestions());
     }
 }

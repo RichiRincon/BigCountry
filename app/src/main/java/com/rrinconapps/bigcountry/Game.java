@@ -10,42 +10,42 @@ import java.util.ArrayList;
  * Created by Ricardo on 19/12/2015.
  */
 public class Game {
-    private int _numQuestions;
-    private int _score;
-    private int _current_question_num;
-    private ArrayList<Question> _questions;
+    private int numQuestions;
+    private int score;
+    private int currentQuestionNum;
+    private ArrayList<Question> questions;
 
     public Game(int numQuestions) {
-        _numQuestions = numQuestions;
-        _score = 0;
-        _current_question_num = 0;
-        _questions = new ArrayList<Question>(_numQuestions);
+        this.numQuestions = numQuestions;
+        score = 0;
+        currentQuestionNum = 0;
+        questions = new ArrayList<Question>(numQuestions);
     }
 
-    public int get_score() {
-        return _score;
+    public int getScore() {
+        return score;
     }
 
     public void add_points(int points) {
-        _score = _score + points;
+        score = score + points;
     }
 
-    public int get_numQuestions() {
-        return _numQuestions;
+    public int getNumQuestions() {
+        return numQuestions;
     }
 
-    public int get_current_question_num() {
-        return _current_question_num;
+    public int getCurrentQuestionNum() {
+        return currentQuestionNum;
     }
 
-    public void new_question(SQLiteDatabase db, ImageButton optionA_IM, TextView optionA_TV,
+    public void newQuestion(SQLiteDatabase db, ImageButton optionA_IM, TextView optionA_TV,
                              ImageButton optionB_IM, TextView optionB_TV) {
         Question q = new Question(db, optionA_IM, optionA_TV, optionB_IM, optionB_TV);
-        _questions.add(q);
-        _current_question_num++;
+        questions.add(q);
+        currentQuestionNum++;
     }
 
-    public Question get_current_question() {
-        return _questions.get(_current_question_num - 1);
+    public Question getCurrentQuestion() {
+        return questions.get(currentQuestionNum - 1);
     }
 }

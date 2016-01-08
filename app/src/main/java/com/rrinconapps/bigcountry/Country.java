@@ -4,16 +4,16 @@ package com.rrinconapps.bigcountry;
  * Created by Ricardo on 19/12/2015.
  */
 public class Country {
-    private String _name;
-    private int _flag_id;
-    private double _size;
-    private double _population;
+    private String name;
+    private int flag_id;
+    private double size;
+    private double population;
 
     public Country(String name, int flag_id, double size, double population) {
-        _name = name;
-        _flag_id = flag_id;
-        _size = size;
-        _population = population;
+        this.name = name;
+        this.flag_id = flag_id;
+        this.size = size;
+        this.population = population;
     }
 
     /**
@@ -22,22 +22,22 @@ public class Country {
      * @return true if it is bigger or false in other case
      */
     public boolean isBigger(Country otherCountry) {
-        return this.get_size() > otherCountry.get_size();
+        return this.getSize() > otherCountry.getSize();
     }
 
-    public String get_name() {
-        return _name;
+    public String getName() {
+        return name;
     }
 
-    public int get_flag_id() {
-        return _flag_id;
+    public int getFlag_id() {
+        return flag_id;
     }
 
-    public double get_size() {
-        return _size;
+    public double getSize() {
+        return size;
     }
 
-    public double get_population() {
-        return _population;
+    public double getPopulation() {
+        return population;
     }
 }
