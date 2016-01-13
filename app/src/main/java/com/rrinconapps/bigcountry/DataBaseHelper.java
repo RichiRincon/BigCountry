@@ -71,10 +71,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //Se ejecuta la sentencia SQL de creación de la tabla
+        //Se ejecuta la sentencia SQL de creacion de la tabla
         db.execSQL(sqlCreate);
 
-        //Insertamos los países en la tabla Countries con la información del json
+        //Insertamos los paises en la tabla Countries con la informacion del json
         try {
             createDatabaseFromJSON(db, context, FILE_NAME_JSON);
         } catch (JSONException e) {
@@ -205,7 +205,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int previousVersion, int newVersion) {
-        //Se elimina la versión anterior de la tabla
+        //Se elimina la versiï¿½n anterior de la tabla
         db.execSQL("DROP TABLE IF EXISTS " + COUNTRIES_TABLE_NAME);
 
         //Se crea de nuevo la tabla
