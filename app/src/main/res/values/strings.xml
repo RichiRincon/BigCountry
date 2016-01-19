@@ -1,6 +1,56 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
     <string name="app_name">Big Country</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!--
+        activity_main.xml
+    -->
+    <!-- Start button text. [CHAR LIMIT=NONE] -->
+    <string name="start_button">New Game</string>
+
+    <!--
+        activity_question.xml
+    -->
+    <!-- Question. [CHAR LIMIT=NONE] -->
+    <string name="bigger_country_question">Which country is bigger ?</string>
+    <!-- Answer option A. [CHAR LIMIT=NONE] -->
+    <string name="answer_option_a">Country 1</string>
+    <!-- Answer option B. [CHAR LIMIT=NONE] -->
+    <string name="answer_option_b">Country 2</string>
+    <!--
+        Score. It will be in the format of "Score: x/y" where x is the number of user's points and
+        y is the number of questions in the game. [CHAR LIMIT=NONE]
+    -->
+    <string name="score">
+        Score: <xliff:g id="num_points" example="x">%d</xliff:g>/<xliff:g id="num_questions" example="y">%d</xliff:g>
+    </string>
+
+    <!--
+        activity_end.xml
+    -->
+    <!--
+        Final score. It will be in the format of "x / y" where x is the number of user's points and
+        y is the number of questions in the game. [CHAR LIMIT=NONE]
+    -->
+    <string name="final_score">
+        <xliff:g id="num_points" example="x">%d</xliff:g> / <xliff:g id="num_questions" example="y">%d</xliff:g>
+    </string>
+    <!-- Final message. [CHAR LIMIT=NONE] -->
+    <string name="end_message">Game Over!</string>
+
+    <!--
+        MainActivity.java
+    -->
+    <!-- Time is up message. [CHAR LIMIT=NONE] -->
+    <string name="time_up_message">Time\'s up!</string>
+    <!-- End message to a bad score. [CHAR LIMIT=NONE] -->
+    <string name="end_message_fail">Best luck next time! Try harder!</string>
+    <!-- End message to a medium score. [CHAR LIMIT=NONE] -->
+    <string name="end_message_medium">Give me 5!</string>
+    <!-- End message to a successful score. [CHAR LIMIT=NONE] -->
+    <string name="end_message_success">Wooow! That was pretty amazing!</string>
+
 </resources>

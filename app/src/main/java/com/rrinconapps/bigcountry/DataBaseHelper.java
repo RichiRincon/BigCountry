@@ -19,11 +19,16 @@ import java.io.InputStream;
 import static com.rrinconapps.bigcountry.ResourcesAccess.*;
 
 /**
- * Created by Ricardo on 04/01/2016.
+ * Helper for creation and treatment of data base in the app.
+ *
+ * @author Ricardo Rincon
+ * @since 2016-01-04
  */
 public class DataBaseHelper extends SQLiteOpenHelper {
 
+    // Name of the json file holding countries' information
     static final String FILE_NAME_JSON = "raw/countries_data_base.json";
+    // Names of different fields for each country in the json file
     static final String JSON_COUNTRIES = "countries";
     static final String JSON_COUNTRIES_NAME = "name";
     static final String JSON_COUNTRIES_CAPITAL = "capital";
@@ -32,7 +37,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     static final String JSON_COUNTRIES_AREA = "area";
     static final String JSON_COUNTRIES_POPULATION = "population";
 
+    // Countries' table name in data base
     static final String COUNTRIES_TABLE_NAME = "Countries";
+    // Name of columns in countries' table of data base
     static final String COUNTRIES_COLUMN_ID = "id";
     static final String COUNTRIES_COLUMN_NAME = "name";
     static final String COUNTRIES_COLUMN_CAPITAL = "capital";
@@ -43,7 +50,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static Context context;
 
-    //SQL to create a Countries table
+    // SQL to create a Countries table
     String sqlCreate = "CREATE TABLE " + COUNTRIES_TABLE_NAME + " (" +
             COUNTRIES_COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY, " +
             COUNTRIES_COLUMN_NAME + " TEXT NOT NULL, " +
@@ -54,11 +61,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             COUNTRIES_COLUMN_POPULATION + " INTEGER)";
 
     /**
+     * Creates the helper for data base creation.
      *
-     * @param context
-     * @param DBname
-     * @param factory
-     * @param version
+     * @param context App context
+     * @param DBname Name of the data base
+     * @param factory CursorFactory
+     * @param version Data base version
      */
     public DataBaseHelper(Context context, String DBname, CursorFactory factory, int version) {
         super(context, DBname, factory, version);
@@ -66,29 +74,29 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Method executes when creating data base.
      *
-     * @param db
+     * @param db Data base
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //Se ejecuta la sentencia SQL de creacion de la tabla
+        // Executes SQL to create the countries table
         db.execSQL(sqlCreate);
 
-        //Insertamos los paises en la tabla Countries con la informacion del json
+        // Insert countries' information from the json file in the table Countries
         try {
             createDatabaseFromJSON(db, context, FILE_NAME_JSON);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
+     * Executes SQL query to know the number of rows in a table of a data base.
      *
-     * @param db
-     * @param tableName
-     * @return
+     * @param db Data base
+     * @param tableName Name of the table we are interested in
+     * @return the number of rows in the table
      */
     public static int numberRowsInTable(SQLiteDatabase db, String tableName) {
         int numRows = -1;
@@ -97,43 +105,51 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             numRows = c.getInt(0);
         }
+        c.close();
         return numRows;
     }
 
     /**
+     * Gets the country in a given row.
      *
-     * @param db
-     * @param rowId
-     * @return
+     * @param db Data base
+     * @param rowId Row id
+     * @return a Country object with the information stored in the indicated row
      */
     public static Country getCountriesRow(SQLiteDatabase db, int rowId) {
         Country country = null;
         String queryGetCountry = "Select * From " + COUNTRIES_TABLE_NAME + " Where " +
                 COUNTRIES_COLUMN_ID + "=" + rowId;
+
         Cursor c = db.rawQuery(queryGetCountry, null);
-        //Nos aseguramos de que existe al menos un resultado
+        // Checks whether there exists a result of the query at least
         if (c.moveToFirst()) {
             String flag_name = c.getString(4);
             int flag_id = getIconId(context, flag_name);
-            country = new Country(c.getString(1), flag_id, c.getDouble(5), c.getInt(6));
+            country = new Country(c.getString(1), c.getString(2), c.getString(3), flag_id,
+                    c.getDouble(5), c.getInt(6));
         }
+
+        c.close();
         return country;
     }
 
     /**
      * Deletes a table and all rows in the table.
-     * @param db
-     * @param tableName
+     *
+     * @param db Data base
+     * @param tableName Name of the table we want to delete
      */
     private void deleteTable(SQLiteDatabase db, String tableName) {
         db.execSQL("DROP TABLE IF EXISTS " + tableName);
     }
 
     /**
+     * Reads countries' information from the json file to fill the table Countries in.
      *
-     * @param db
-     * @param context
-     * @param fileNameJSON
+     * @param db Data base
+     * @param context App context
+     * @param fileNameJSON Name of the json file
      * @throws IllegalArgumentException
      * @throws JSONException
      * @throws IOException
@@ -148,7 +164,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             throw new IllegalArgumentException();
         }
 
-        /* If there are countries in "Countries" table, we empty it. */
+        /* If there are already countries in "Countries" table, we empty it. */
         if(numberRowsInTable(db, COUNTRIES_TABLE_NAME) > 0)
         {
             deleteTable(db, COUNTRIES_TABLE_NAME);
@@ -198,17 +214,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Method executes when upgrading data base.
      *
-     * @param db
-     * @param previousVersion
-     * @param newVersion
+     * @param db Data base
+     * @param previousVersion of data base
+     * @param newVersion of data base
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int previousVersion, int newVersion) {
-        //Se elimina la versi�n anterior de la tabla
+        // We delete previous version of the table
         db.execSQL("DROP TABLE IF EXISTS " + COUNTRIES_TABLE_NAME);
 
-        //Se crea de nuevo la tabla
+        // We create it again
         onCreate(db);
     }
 }

@@ -17,10 +17,12 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
+    // Data base to hold countries information
     private SQLiteDatabase db;
 
     Game game;
 
+    // Progress bar and countdown timer variables
     ProgressBar qProgressBar;
     CountDownTimer mCountDownTimer;
     int counter = 0;
@@ -54,47 +56,72 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
+     * Start a new game.
      *
-     * @param view
+     * @param view Screen view
      */
     public void startGame(View view) {
+        // Changes the initial view to a question view
         setContentView(R.layout.activity_question);
+
+        // Starts a new game
         game = new Game(8);
+        // Display the initial score base on the number of questions
         displayScore();
 
-        //Abrimos la base de datos 'DBWorld' en modo lectura
+        // Uses a helper to create a data base 'DBWorld'
         DataBaseHelper myDbHelper = new DataBaseHelper(this, "DBWorld", null, 1);
         db = myDbHelper.getWritableDatabase();
 
+        // Produces the first question
         nextQuestion(view);
     }
 
+    /**
+     * Produces a question.
+     *
+     * @param view Screen view
+     */
     public void nextQuestion(View view) {
         enableImageButtons();
+
+        // If we have not finished doing the planned number of questions
         if (game.getCurrentQuestionNum() < game.getNumQuestions()) {
+
+            // Takes the visual elements to change for the question
             ImageButton optionA_IM = (ImageButton) findViewById(R.id.option_a_image_button);
             TextView optionA_TV = (TextView) findViewById(R.id.option_a_name);
             ImageButton optionB_IM = (ImageButton) findViewById(R.id.option_b_image_button);
             TextView optionB_TV = (TextView) findViewById(R.id.option_b_name);
+
+            // Starts progress bar
             questionProgressBar();
+
+            // Creates question from data base information
             game.newQuestion(db, optionA_IM, optionA_TV, optionB_IM, optionB_TV);
         } else {
             gameFinished();
         }
     }
 
+    /**
+     * Manage the progress bar for a question.
+     */
     private void questionProgressBar() {
+        // Takes the visual element
         qProgressBar = (ProgressBar) findViewById(R.id.progressbar);
+
+        // Initializes parameter for the count down timer
         counter = 0;
+        qProgressBar.setProgress(counter);
         int timeToAnswer = 10; // in seconds
         int secondParts = 20;
-        long countDownInterval = (long) (1.0/secondParts)*1000;
-        qProgressBar.setProgress(counter);
+        //long countDownInterval = (long) (1.0/secondParts)*1000;
         qProgressBar.setMax(timeToAnswer*secondParts);
+
         mCountDownTimer = new CountDownTimer(timeToAnswer*1000, 50) {
             @Override
             public void onTick(long millisUntilFinished) {
-                //Log.v("Log_tag", "Tick of Progress" + counter + millisUntilFinished);
                 counter++;
                 qProgressBar.setProgress(counter);
             }
@@ -104,45 +131,59 @@ public class MainActivity extends ActionBarActivity {
                 counter++;
                 qProgressBar.setProgress(counter);
 
-                // Show a time out message as a toast
+                // Show a time is up message as a toast
                 Context context = getBaseContext();
-                CharSequence timeOutMessage = "Time out!";
+                CharSequence timeOutMessage = getString(R.string.time_up_message);
                 int toastDuration = Toast.LENGTH_SHORT;
 
                 Toast toast = Toast.makeText(context, timeOutMessage, toastDuration);
                 toast.show();
 
+                // If time is up, it changes to next question
                 nextQuestion(getCurrentFocus());
             }
         };
         mCountDownTimer.start();
     }
 
+    /**
+     * Produces the game finished view.
+     */
     public void gameFinished() {
+        // Changes the question view to the end view
         setContentView(R.layout.activity_end);
 
-        //Cerramos la base de datos
+        // Closes data base
         if(db != null) {
             db.close();
         }
 
-        TextView end_message = (TextView) findViewById(R.id.end_message);
+        // Displays the final score
         TextView finalScoreMessage = (TextView) findViewById(R.id.final_score_message);
+        finalScoreMessage.setText(getString(R.string.final_score, game.getScore(),
+                game.getNumQuestions()));
+
+        // Displays an end message depending on the score
+        TextView end_message = (TextView) findViewById(R.id.end_message);
         double score = (double) game.getScore() / game.getNumQuestions();
-        finalScoreMessage.setText(game.getScore() + " / " + game.getNumQuestions());
         if (score < 0.5) {
-            end_message.setText("Best luck next time! try harder!");
+            end_message.setText(getString(R.string.end_message_fail));
         }
         else if (score < 0.7) {
-            end_message.setText("Give me 5!");
+            end_message.setText(getString(R.string.end_message_medium));
         } else {
-            end_message.setText("Wooow! That was pretty amazing!");
+            end_message.setText(getString(R.string.end_message_success));
         }
     }
 
+    /**
+     * Validates whether or not option A is the answer of the question.
+     *
+     * @param view Screen view
+     */
     public void validateOptionA(View view) {
-        disableImageButtons();
-        mCountDownTimer.cancel();
+        answerSelected();
+
         ImageButton optionA_ImageButton = (ImageButton) findViewById(R.id.option_a_image_button);
         Question q = game.getCurrentQuestion();
         if (q.getAnswer().equals(Answers.OPTION_A)) {
@@ -153,12 +194,18 @@ public class MainActivity extends ActionBarActivity {
             wrongAnswerEffect(optionA_ImageButton);
         }
         resetAnswerEffect(optionA_ImageButton);
+
         nextQuestion(view);
     }
 
+    /**
+     * Validates whether or not option B is the answer of the question.
+     *
+     * @param view Screen view
+     */
     public void validateOptionB(View view) {
-        disableImageButtons();
-        mCountDownTimer.cancel();
+        answerSelected();
+
         ImageButton optionB_ImageButton = (ImageButton) findViewById(R.id.option_b_image_button);
         Question q = game.getCurrentQuestion();
         if (q.getAnswer().equals(Answers.OPTION_B)) {
@@ -169,22 +216,49 @@ public class MainActivity extends ActionBarActivity {
             wrongAnswerEffect(optionB_ImageButton);
         }
         resetAnswerEffect(optionB_ImageButton);
+
         nextQuestion(view);
     }
 
+    /**
+     * Manages common actions to perform when an option answer has been selected.
+     */
+    private void answerSelected() {
+        disableImageButtons();
+        mCountDownTimer.cancel();
+    }
+
+    /**
+     * Displays an effect on an image button corresponding to a right answer.
+     *
+     * @param option_ImageButton which displays the effect
+     */
     private void rightAnswerEffect(ImageButton option_ImageButton) {
         option_ImageButton.getBackground().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
 
     }
 
+    /**
+     * Displays an effect on an image button corresponding to a wrong answer.
+     *
+     * @param option_ImageButton which displays the effect
+     */
     private void wrongAnswerEffect(ImageButton option_ImageButton) {
         option_ImageButton.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.DARKEN);
     }
 
+    /**
+     * Resets any possible effects on an image button.
+     *
+     * @param option_ImageButton which resets its effects
+     */
     private void resetAnswerEffect(ImageButton option_ImageButton) {
         option_ImageButton.getBackground().clearColorFilter();
     }
 
+    /**
+     * Disable the image buttons to answer the question.
+     */
     private void disableImageButtons() {
         ImageButton optionA_ImageButton = (ImageButton) findViewById(R.id.option_a_image_button);
         ImageButton optionB_ImageButton = (ImageButton) findViewById(R.id.option_b_image_button);
@@ -192,6 +266,9 @@ public class MainActivity extends ActionBarActivity {
         optionB_ImageButton.setEnabled(false);
     }
 
+    /**
+     * Enable the image buttons to answer the question.
+     */
     private void enableImageButtons() {
         ImageButton optionA_ImageButton = (ImageButton) findViewById(R.id.option_a_image_button);
         ImageButton optionB_ImageButton = (ImageButton) findViewById(R.id.option_b_image_button);
@@ -200,10 +277,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
-     * This method displays the new score on the screen while quizz is still alive.
+     * This method displays the new score on the screen while quiz is still alive.
      */
     private void displayScore() {
         TextView scoreTextView = (TextView) findViewById(R.id.score_view);
-        scoreTextView.setText("Score: " + game.getScore() + "/" + game.getNumQuestions());
+        scoreTextView.setText(getString(R.string.score, game.getScore(), game.getNumQuestions()));
     }
 }

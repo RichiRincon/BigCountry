@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Which country is bigger ?"
+            android:text="@string/bigger_country_question"
             android:textColor="@android:color/white"
             android:textSize="32sp"
             android:textStyle="bold" />
@@ -47,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/option_a_image_button"
-                    android:text="Australia"
+                    android:text="@string/answer_option_a"
                     android:textColor="@android:color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -73,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/option_b_image_button"
-                    android:text="Brasil"
+                    android:text="@string/answer_option_b"
                     android:textColor="@android:color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -91,7 +91,7 @@
         android:layout_above="@+id/progressbar"
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
-        android:text="Score: 0/5"
+        android:text="@string/score"
         android:textColor="@android:color/black"
         android:textSize="24sp"
         android:textStyle="bold" />

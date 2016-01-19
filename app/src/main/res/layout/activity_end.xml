@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_gravity="center"
-        android:text="0/0"
+        android:text="@string/final_score"
         android:textColor="@android:color/black"
         android:textSize="32sp"
         android:textStyle="bold" />
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_gravity="center"
-        android:text="Game Over!"
+        android:text="@string/end_message"
         android:textColor="@android:color/black"
         android:textSize="32sp"
         android:textStyle="bold" />
