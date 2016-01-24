@@ -33,6 +33,15 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
     }
 
+    /**
+     * Set the initial view of the app.
+     *
+     * @param view Screen view
+     */
+    public void setInitialView(View view) {
+        setContentView(R.layout.activity_main);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -283,4 +292,24 @@ public class MainActivity extends ActionBarActivity {
         TextView scoreTextView = (TextView) findViewById(R.id.score_view);
         scoreTextView.setText(getString(R.string.score, game.getScore(), game.getNumQuestions()));
     }
+
+    /**
+     * This method displays a summary of the questions in a game.
+     *
+     * @param view Screen view
+     */
+    public void gameSummary(View view) {
+        setContentView(R.layout.activity_game_summary);
+
+        String gameSummaryMessage = "";
+        for (int i = 0; i < game.getNumQuestions(); i++) {
+            gameSummaryMessage += "\n" + getString(R.string.question_summary, i+1,
+                    game.getQuestion(i).getOptionA().getName(),
+                    game.getQuestion(i).getOptionB().getName()) + "\n";
+        }
+
+        TextView questionsSummaryTextView = (TextView) findViewById(R.id.questions_summary_text);
+        questionsSummaryTextView.setText(gameSummaryMessage);
+    }
+
 }

@@ -1,38 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AppBackgroundStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/AppBackgroundStyle"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/world_map_image_view"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_margin="16dp"
+        android:layout_weight="1"
         android:src="@drawable/balloons" />
 
-    <TextView
-        android:id="@+id/final_score_message"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_gravity="center"
-        android:text="@string/final_score"
-        android:textColor="@android:color/black"
-        android:textSize="32sp"
-        android:textStyle="bold" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/final_score_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/final_score"
+            android:textColor="@android:color/black"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_vertical" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="gameSummary"
+            android:text="@string/questions_summary_button" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/end_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:layout_gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         android:text="@string/end_message"
         android:textColor="@android:color/black"
         android:textSize="32sp"
         android:textStyle="bold" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:onClick="setInitialView"
+        android:text="@string/menu_button" />
 
 </LinearLayout>

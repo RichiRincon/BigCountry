@@ -38,8 +38,27 @@
     <string name="final_score">
         <xliff:g id="num_points" example="x">%d</xliff:g> / <xliff:g id="num_questions" example="y">%d</xliff:g>
     </string>
+    <!-- Go to questions' summary button text. [CHAR LIMIT=NONE] -->
+    <string name="questions_summary_button">Summary</string>
     <!-- Final message. [CHAR LIMIT=NONE] -->
     <string name="end_message">Game Over!</string>
+    <!-- Go to menu button text. [CHAR LIMIT=NONE] -->
+    <string name="menu_button">Menu</string>
+
+    <!--
+        activity_game_summary.xml
+    -->
+    <!-- Head of the section. [CHAR LIMIT=NONE] -->
+    <string name="section_head">Game Summary</string>
+    <!--
+        Question summary. It will be in the format of "i. country1 - country2" where i is the number
+        of the question, country1 is option A of the question and country2 is option B of the
+        question. [CHAR LIMIT=NONE]
+    -->
+    <string name="question_summary">
+        <xliff:g id="num_question" example="1">%d</xliff:g>.
+        <xliff:g id="country1" example="Australia">%s</xliff:g> - <xliff:g id="country2" example="Spain">%s</xliff:g>
+    </string>
 
     <!--
         MainActivity.java
