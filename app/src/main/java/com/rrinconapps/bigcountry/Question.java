@@ -26,6 +26,8 @@ public class Question {
     private Country optionA;
     private Country optionB;
     private Answers answer;
+    // Indicates if the question has been correctly answered
+    private boolean isRight;
 
     /**
      * Construct a question with data of a data base.
@@ -100,4 +102,21 @@ public class Question {
     public Answers getAnswer() {
         return answer;
     }
+
+    /**
+     * Sets if the question has been correctly answered.
+     * @param isRight true if it has been correctly answered, false if not
+     */
+    public void setIsRight(boolean isRight) {
+        this.isRight = isRight;
+    }
+
+    /**
+     * Gets if the question has been correctly answered.
+     * @return true if it has been correctly answered, false if not
+     */
+    public boolean isRight() {
+        return isRight;
+    }
+
 }

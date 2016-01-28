@@ -65,11 +65,28 @@
     -->
     <!-- Time is up message. [CHAR LIMIT=NONE] -->
     <string name="time_up_message">Time\'s up!</string>
+    <!-- Explanation of the summary message. [CHAR LIMIT=NONE] -->
+    <string name="summary_message_explanation">Countries in capital letters are the correct answers.
+        \n\nThere is a mark showing if you got the question right.</string>
+
+    <!--
+        Game.java
+    -->
     <!-- End message to a bad score. [CHAR LIMIT=NONE] -->
     <string name="end_message_fail">Best luck next time! Try harder!</string>
     <!-- End message to a medium score. [CHAR LIMIT=NONE] -->
     <string name="end_message_medium">Give me 5!</string>
     <!-- End message to a successful score. [CHAR LIMIT=NONE] -->
     <string name="end_message_success">Wooow! That was pretty amazing!</string>
+
+    <!--
+        ExitDialogFragment.java
+    -->
+    <!-- Exit confirmation question. [CHAR LIMIT=NONE] -->
+    <string name="exit_confirmation_question">Are you sure you want to leave?</string>
+    <!-- Positive button text. [CHAR LIMIT=NONE] -->
+    <string name="positive_button_text">Yes</string>
+    <!-- Negative button text. [CHAR LIMIT=NONE] -->
+    <string name="negative_button_text">No</string>
 
 </resources>

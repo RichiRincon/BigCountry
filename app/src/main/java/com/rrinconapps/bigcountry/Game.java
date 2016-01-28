@@ -1,5 +1,6 @@
 package com.rrinconapps.bigcountry;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -46,7 +47,7 @@ public class Game {
      *
      * @param points Number of points to add
      */
-    public void add_points(int points) {
+    public void addPoints(int points) {
         score = score + points;
     }
 
@@ -102,6 +103,14 @@ public class Game {
     }
 
     /**
+     * Sets if the current question has been correctly answered.
+     * @param isRight true if it has been correctly answered, false if not
+     */
+    public void setCurrentQuestionIsRight(boolean isRight) {
+        questions.get(currentQuestionNum - 1).setIsRight(isRight);
+    }
+
+    /**
      * Gets the question at a given index.
      * @param index Position in the ArrayList of the question we want
      * @return the question object
@@ -109,4 +118,64 @@ public class Game {
     public Question getQuestion(int index) {
         return questions.get(index);
     }
+
+    /**
+     * Selects an end message for the game depending on the score.
+     *
+     * @param context Activity context
+     * @return the appropriate end message
+     */
+    public String getEndGameMessage(Context context) {
+        String endGameMessage;
+        double score = (double) getScore() / getNumQuestions();
+
+        if (score < 0.5) {
+            endGameMessage = context.getString(R.string.end_message_fail);
+        }
+        else if (score < 0.7) {
+            endGameMessage = context.getString(R.string.end_message_medium);
+        } else {
+            endGameMessage = context.getString(R.string.end_message_success);
+        }
+
+        return endGameMessage;
+    }
+
+    /**
+     * Creates the game summary.
+     *
+     * @param context Activity context
+     * @return the game summary message
+     */
+    public String getGameSummary(Context context) {
+        String gameSummaryMessage = "";
+        for (int i = 0; i < currentQuestionNum; i++) {
+            Question q = questions.get(i);
+            String country1;
+            String country2;
+            String isRight;
+
+            // Sets the country answer to upper case
+            if (q.getAnswer()== Answers.OPTION_A) {
+                country1 = q.getOptionA().getName().toUpperCase();
+                country2 = q.getOptionB().getName();
+            }
+            else {
+                country1 = q.getOptionA().getName();
+                country2 = q.getOptionB().getName().toUpperCase();
+            }
+
+            if (q.isRight()) {
+                isRight = "\u2713"; // Unicode character for right answer
+            }
+            else {
+                isRight = "\u2716"; // Unicode character for wrong answer
+            }
+
+            gameSummaryMessage += "\n" + context.getString(R.string.question_summary, i + 1,
+                    country1, country2) + "  : " + isRight + "\n";
+        }
+        return gameSummaryMessage;
+    }
+
 }

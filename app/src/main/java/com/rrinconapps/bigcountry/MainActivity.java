@@ -20,6 +20,9 @@ public class MainActivity extends ActionBarActivity {
     // Data base to hold countries information
     private SQLiteDatabase db;
 
+    // Keep a track of the current layout id
+    private int currentViewId = -1;
+
     Game game;
 
     // Progress bar and countdown timer variables
@@ -30,7 +33,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setCurrentViewById(R.layout.activity_main);
     }
 
     /**
@@ -39,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
      * @param view Screen view
      */
     public void setInitialView(View view) {
-        setContentView(R.layout.activity_main);
+        setCurrentViewById(R.layout.activity_main);
     }
 
     @Override
@@ -65,13 +68,32 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
+     * Sets a new layout.
+     * @param id of the new layout
+     */
+    public void setCurrentViewById(int id)
+    {
+        setContentView(id);
+        currentViewId = id;
+    }
+
+    /**
+     * Gets the current layout id.
+     * @return the id of the current layout
+     */
+    public int getCurrentViewById()
+    {
+        return currentViewId;
+    }
+
+    /**
      * Start a new game.
      *
      * @param view Screen view
      */
     public void startGame(View view) {
         // Changes the initial view to a question view
-        setContentView(R.layout.activity_question);
+        setCurrentViewById(R.layout.activity_question);
 
         // Starts a new game
         game = new Game(8);
@@ -160,7 +182,7 @@ public class MainActivity extends ActionBarActivity {
      */
     public void gameFinished() {
         // Changes the question view to the end view
-        setContentView(R.layout.activity_end);
+        setCurrentViewById(R.layout.activity_end);
 
         // Closes data base
         if(db != null) {
@@ -174,15 +196,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Displays an end message depending on the score
         TextView end_message = (TextView) findViewById(R.id.end_message);
-        double score = (double) game.getScore() / game.getNumQuestions();
-        if (score < 0.5) {
-            end_message.setText(getString(R.string.end_message_fail));
-        }
-        else if (score < 0.7) {
-            end_message.setText(getString(R.string.end_message_medium));
-        } else {
-            end_message.setText(getString(R.string.end_message_success));
-        }
+        end_message.setText(game.getEndGameMessage(this));
     }
 
     /**
@@ -193,16 +207,7 @@ public class MainActivity extends ActionBarActivity {
     public void validateOptionA(View view) {
         answerSelected();
 
-        ImageButton optionA_ImageButton = (ImageButton) findViewById(R.id.option_a_image_button);
-        Question q = game.getCurrentQuestion();
-        if (q.getAnswer().equals(Answers.OPTION_A)) {
-            game.add_points(1);
-            displayScore();
-            rightAnswerEffect(optionA_ImageButton);
-        } else {
-            wrongAnswerEffect(optionA_ImageButton);
-        }
-        resetAnswerEffect(optionA_ImageButton);
+        checkAnswer(R.id.option_a_image_button, Answers.OPTION_A);
 
         nextQuestion(view);
     }
@@ -215,16 +220,7 @@ public class MainActivity extends ActionBarActivity {
     public void validateOptionB(View view) {
         answerSelected();
 
-        ImageButton optionB_ImageButton = (ImageButton) findViewById(R.id.option_b_image_button);
-        Question q = game.getCurrentQuestion();
-        if (q.getAnswer().equals(Answers.OPTION_B)) {
-            game.add_points(1);
-            displayScore();
-            rightAnswerEffect(optionB_ImageButton);
-        } else {
-            wrongAnswerEffect(optionB_ImageButton);
-        }
-        resetAnswerEffect(optionB_ImageButton);
+        checkAnswer(R.id.option_b_image_button, Answers.OPTION_B);
 
         nextQuestion(view);
     }
@@ -235,6 +231,30 @@ public class MainActivity extends ActionBarActivity {
     private void answerSelected() {
         disableImageButtons();
         mCountDownTimer.cancel();
+    }
+
+    /**
+     * Checks if an option is the right answer or not and performs actions depending on that.
+     *
+     * @param optionSelectedImageButtonId id of the image button selected
+     * @param optionSelected by the user to answer the question
+     */
+    private void checkAnswer(int optionSelectedImageButtonId, Answers optionSelected) {
+
+        ImageButton optionImageButton = (ImageButton) findViewById(optionSelectedImageButtonId);
+
+        Question q = game.getCurrentQuestion();
+        if (q.getAnswer().equals(optionSelected)) {
+            game.addPoints(1);
+            game.setCurrentQuestionIsRight(true);
+            displayScore();
+            rightAnswerEffect(optionImageButton);
+        } else {
+            game.setCurrentQuestionIsRight(false);
+            wrongAnswerEffect(optionImageButton);
+        }
+
+        resetAnswerEffect(optionImageButton);
     }
 
     /**
@@ -294,22 +314,43 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
+     * Overrides the behaviour of phone back button.
+     */
+    @Override
+    public void onBackPressed() {
+        if (getCurrentViewById() == R.layout.activity_game_summary) {
+            gameFinished();
+        }
+        else {
+            backButtonHandler();
+        }
+    }
+
+    /**
+     * Displays a question to confirm exit when back button has been pressed.
+     */
+    private void backButtonHandler() {
+        ExitDialogFragment exitDialog = new ExitDialogFragment();
+        exitDialog.show(getFragmentManager(), "tagAlert");
+    }
+
+    /**
      * This method displays a summary of the questions in a game.
      *
      * @param view Screen view
      */
     public void gameSummary(View view) {
-        setContentView(R.layout.activity_game_summary);
+        // Set the game summary layout
+        setCurrentViewById(R.layout.activity_game_summary);
 
-        String gameSummaryMessage = "";
-        for (int i = 0; i < game.getNumQuestions(); i++) {
-            gameSummaryMessage += "\n" + getString(R.string.question_summary, i+1,
-                    game.getQuestion(i).getOptionA().getName(),
-                    game.getQuestion(i).getOptionB().getName()) + "\n";
-        }
+        // Show an explanation of the summary message as a toast
+        CharSequence summaryMessageExplanation = getString(R.string.summary_message_explanation);
+        Toast toast = Toast.makeText(this, summaryMessageExplanation, Toast.LENGTH_LONG);
+        toast.show();
 
+        // Display the game summary
         TextView questionsSummaryTextView = (TextView) findViewById(R.id.questions_summary_text);
-        questionsSummaryTextView.setText(gameSummaryMessage);
+        questionsSummaryTextView.setText(game.getGameSummary(this));
     }
 
 }
