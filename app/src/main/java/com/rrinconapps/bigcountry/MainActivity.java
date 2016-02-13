@@ -109,6 +109,28 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
+     * Start a new game in challenge mode.
+     *
+     * @param view Screen view
+     */
+    public void startChallenge(View view) {
+        // Changes the initial view to a question view
+        setCurrentViewById(R.layout.activity_question);
+
+        // Starts a new game
+        game = new Game(8);
+        // Display the initial score base on the number of questions
+        displayScore();
+
+        // Uses a helper to create a data base 'DBWorld'
+        DataBaseHelper myDbHelper = new DataBaseHelper(this, "DBWorld", null, 1);
+        db = myDbHelper.getWritableDatabase();
+
+        // Produces the first question
+        nextQuestion(view);
+    }
+
+    /**
      * Produces a question.
      *
      * @param view Screen view
@@ -145,12 +167,11 @@ public class MainActivity extends ActionBarActivity {
         // Initializes parameter for the count down timer
         counter = 0;
         qProgressBar.setProgress(counter);
-        int timeToAnswer = 10; // in seconds
         int secondParts = 20;
         //long countDownInterval = (long) (1.0/secondParts)*1000;
-        qProgressBar.setMax(timeToAnswer*secondParts);
+        qProgressBar.setMax(game.getTimeToAnswerQuestion()*secondParts);
 
-        mCountDownTimer = new CountDownTimer(timeToAnswer*1000, 50) {
+        mCountDownTimer = new CountDownTimer(game.getTimeToAnswerQuestion()*1000, 50) {
             @Override
             public void onTick(long millisUntilFinished) {
                 counter++;

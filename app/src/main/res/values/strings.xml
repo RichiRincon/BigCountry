@@ -10,6 +10,12 @@
     -->
     <!-- Start button text. [CHAR LIMIT=NONE] -->
     <string name="start_button">New Game</string>
+    <!-- Start a challenge button text. [CHAR LIMIT=NONE] -->
+    <string name="start_challenge_button">BC Challenge</string>
+    <!-- Rate button text. [CHAR LIMIT=NONE] -->
+    <string name="rate_button">Rate us</string>
+    <!-- Study button text. [CHAR LIMIT=NONE] -->
+    <string name="study_button">Study</string>
 
     <!--
         activity_question.xml

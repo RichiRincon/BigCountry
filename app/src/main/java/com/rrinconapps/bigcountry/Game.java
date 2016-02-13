@@ -17,7 +17,7 @@ public class Game {
     private int numQuestions;
     private int score;
     private int lifes;
-    private int timeToAnswerQuestion;
+    private int timeToAnswerQuestion; // in seconds
     private int currentQuestionNum;
     private ArrayList<Question> questions;
 
@@ -31,7 +31,16 @@ public class Game {
         score = 0;
         lifes = 0;
         currentQuestionNum = 0;
+        timeToAnswerQuestion = 10;
         questions = new ArrayList<Question>(numQuestions);
+    }
+
+    /**
+     * Gets the time the user has to answer a question.
+     * @return the current time to answer a question
+     */
+    public int getTimeToAnswerQuestion() {
+        return timeToAnswerQuestion;
     }
 
     /**
