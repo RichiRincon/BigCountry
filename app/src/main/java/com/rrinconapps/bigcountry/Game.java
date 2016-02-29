@@ -15,8 +15,9 @@ import java.util.ArrayList;
  */
 public class Game {
     private int numQuestions;
+    private int isChallenge;
     private int score;
-    private int lifes;
+    private int lives;
     private int timeToAnswerQuestion; // in seconds
     private int currentQuestionNum;
     private ArrayList<Question> questions;
@@ -28,8 +29,18 @@ public class Game {
      */
     public Game(int numQuestions) {
         this.numQuestions = numQuestions;
+        isChallenge = 0;
         score = 0;
-        lifes = 0;
+        lives = 0;
+        currentQuestionNum = 0;
+        timeToAnswerQuestion = 10;
+        questions = new ArrayList<Question>(numQuestions);
+    }
+    public Game() {
+        numQuestions = 1;
+        isChallenge = 1;
+        score = 0;
+        lives = 2;
         currentQuestionNum = 0;
         timeToAnswerQuestion = 10;
         questions = new ArrayList<Question>(numQuestions);
@@ -44,11 +55,36 @@ public class Game {
     }
 
     /**
+     * Gets whether or not the game is a challenge.
+     * @return 1 if the game is a challenge; 0 in any other cases
+     */
+    public int getIsChallenge() {
+        return isChallenge;
+    }
+
+    /**
      * Gets the number of points of the user in the game.
      * @return the score
      */
     public int getScore() {
         return score;
+    }
+
+    /**
+     * Gets the number of lives of the user in the game.
+     * @return the number of lives
+     */
+    public int getLives() {
+        return lives;
+    }
+
+    /**
+     * Subtracts a life.
+     */
+    public void loseLife() {
+        if (lives > 0) {
+            lives = lives - 1;
+        }
     }
 
     /**
@@ -65,7 +101,11 @@ public class Game {
      * @return the number of questions
      */
     public int getNumQuestions() {
-        return numQuestions;
+        if (isChallenge == 0) {
+            return numQuestions;
+        } else {
+            return questions.size();
+        }
     }
 
     /**

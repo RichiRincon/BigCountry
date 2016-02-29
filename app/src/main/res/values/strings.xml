@@ -13,7 +13,7 @@
     <!-- Start a challenge button text. [CHAR LIMIT=NONE] -->
     <string name="start_challenge_button">BC Challenge</string>
     <!-- Rate button text. [CHAR LIMIT=NONE] -->
-    <string name="rate_button">Rate us</string>
+    <string name="rate_button">Rate us!</string>
     <!-- Study button text. [CHAR LIMIT=NONE] -->
     <string name="study_button">Study</string>
 
@@ -32,6 +32,20 @@
     -->
     <string name="score">
         Score: <xliff:g id="num_points" example="x">%d</xliff:g>/<xliff:g id="num_questions" example="y">%d</xliff:g>
+    </string>
+    <!--
+        Challenge score. It will be in the format of "Score: x" where x is the number of user's
+        points so far in the game. [CHAR LIMIT=NONE]
+    -->
+    <string name="challenge_score">
+        Score: <xliff:g id="num_points" example="x">%d</xliff:g>
+    </string>
+    <!--
+        Number of lives message during the challenge. It will be in the format of "Lives: x" where
+        x is the number of user's lives in the challenge. [CHAR LIMIT=NONE]
+    -->
+    <string name="lives_in_challenge">
+        Lives: <xliff:g id="num_lives" example="2">%d</xliff:g>
     </string>
 
     <!--

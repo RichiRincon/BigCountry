@@ -34,6 +34,24 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setCurrentViewById(R.layout.activity_main);
+
+        // Uses a helper to create a data base 'DBWorld'
+        DataBaseHelper myDbHelper = new DataBaseHelper(this, "DBWorld", null, 1);
+        db = myDbHelper.getWritableDatabase();
+    }
+
+    /**
+     * Perform any final cleanup before the activity is destroyed.
+     * This happens because we called finish() on the activity (in ExitDialogFragment.java).
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Close the data base
+        if(db != null) {
+            db.close();
+        }
     }
 
     /**
@@ -100,10 +118,6 @@ public class MainActivity extends ActionBarActivity {
         // Display the initial score base on the number of questions
         displayScore();
 
-        // Uses a helper to create a data base 'DBWorld'
-        DataBaseHelper myDbHelper = new DataBaseHelper(this, "DBWorld", null, 1);
-        db = myDbHelper.getWritableDatabase();
-
         // Produces the first question
         nextQuestion(view);
     }
@@ -118,16 +132,34 @@ public class MainActivity extends ActionBarActivity {
         setCurrentViewById(R.layout.activity_question);
 
         // Starts a new game
-        game = new Game(8);
-        // Display the initial score base on the number of questions
-        displayScore();
+        game = new Game();
 
-        // Uses a helper to create a data base 'DBWorld'
-        DataBaseHelper myDbHelper = new DataBaseHelper(this, "DBWorld", null, 1);
-        db = myDbHelper.getWritableDatabase();
+        // Display the initial number of lives
+        displayNumLives();
+        setVisible(R.id.lives_challenge_message);
+        // Display the initial score
+        displayChallengeScore();
 
         // Produces the first question
         nextQuestion(view);
+    }
+
+    /**
+     * Displays the number of lives.
+     */
+    private void displayNumLives() {
+        TextView livesChallengeMessage = (TextView) findViewById(R.id.lives_challenge_message);
+        livesChallengeMessage.setText(getString(R.string.lives_in_challenge, game.getLives()));
+    }
+
+    /**
+     * Sets a view visible.
+     *
+     * @param ViewId Id of the view to set visible
+     */
+    private void setVisible(int ViewId) {
+        View interestedView = findViewById(ViewId);
+        interestedView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -139,7 +171,7 @@ public class MainActivity extends ActionBarActivity {
         enableImageButtons();
 
         // If we have not finished doing the planned number of questions
-        if (game.getCurrentQuestionNum() < game.getNumQuestions()) {
+        if ((game.getCurrentQuestionNum() < game.getNumQuestions()) || (game.getLives() > 0)) {
 
             // Takes the visual elements to change for the question
             ImageButton optionA_IM = (ImageButton) findViewById(R.id.option_a_image_button);
@@ -205,11 +237,6 @@ public class MainActivity extends ActionBarActivity {
         // Changes the question view to the end view
         setCurrentViewById(R.layout.activity_end);
 
-        // Closes data base
-        if(db != null) {
-            db.close();
-        }
-
         // Displays the final score
         TextView finalScoreMessage = (TextView) findViewById(R.id.final_score_message);
         finalScoreMessage.setText(getString(R.string.final_score, game.getScore(),
@@ -268,11 +295,19 @@ public class MainActivity extends ActionBarActivity {
         if (q.getAnswer().equals(optionSelected)) {
             game.addPoints(1);
             game.setCurrentQuestionIsRight(true);
-            displayScore();
             rightAnswerEffect(optionImageButton);
         } else {
             game.setCurrentQuestionIsRight(false);
+            game.loseLife();
             wrongAnswerEffect(optionImageButton);
+        }
+
+        if (game.getIsChallenge() == 0)
+        {
+            displayScore();
+        } else {
+            displayChallengeScore();
+            displayNumLives();
         }
 
         resetAnswerEffect(optionImageButton);
@@ -332,6 +367,14 @@ public class MainActivity extends ActionBarActivity {
     private void displayScore() {
         TextView scoreTextView = (TextView) findViewById(R.id.score_view);
         scoreTextView.setText(getString(R.string.score, game.getScore(), game.getNumQuestions()));
+    }
+
+    /**
+     * Displays the new score on the screen during a BC challenge while it is still alive.
+     */
+    private void displayChallengeScore() {
+        TextView scoreTextView = (TextView) findViewById(R.id.score_view);
+        scoreTextView.setText(getString(R.string.challenge_score, game.getScore()));
     }
 
     /**
